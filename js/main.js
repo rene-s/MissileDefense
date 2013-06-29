@@ -11,7 +11,10 @@ window.onload = function(){console.log(window);
         bear.y = window.innerHeight/2;
         bear.frame = 5;
         game.rootScene.addChild(bear);
-	
+
+		/**
+		 * Test
+		 */
         bear.addEventListener("enterframe", function(){
             this.x+=5;
 		
@@ -22,7 +25,7 @@ window.onload = function(){console.log(window);
 		
 			this.y = middle+offs*40;
 			
-			if(lastOffs<0 && lastOffs< offs) {
+			if((lastOffs<0 && lastOffs< offs) || (lastOffs>0 && lastOffs > offs)) {
 				game.assets['snd/boing_spring.wav'].play();
 			}
 			
