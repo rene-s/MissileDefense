@@ -1,5 +1,8 @@
 enchant();
 
+beam = {x:0, y:0, stepX:5, stepY:5};
+lastCoord = {x:0, y:0};
+
 window.onload = function(){console.log(window);	
     var game = new Core(window.innerWidth, window.innerHeight), middle = window.innerHeight/2;
     game.fps = 30;
@@ -11,12 +14,15 @@ window.onload = function(){console.log(window);
         bear.y = window.innerHeight/2;
         bear.frame = 5;
         game.rootScene.addChild(bear);
+		
+		var sky = new Surface(window.innerWidth, window.innerHeight);
+		game.rootScene.addChild(sky);
 	
 		/**
 		 * Test
 		 */
-		var enterFrameHandler = function(){
-            this.x+=5;
+		var moveBear = function(){
+            this.x+=1;
 		
 			if(this.x>window.innerWidth) { this.x = 0; }
 		
@@ -32,8 +38,28 @@ window.onload = function(){console.log(window);
             this.frame = this.age % 2 + 6;
         };
 		
-        bear.addEventListener("enterframe", enterFrameHandler);
-
+		var moveBeam = function() {
+			lastCoord = {x:beam.x, y:beam.y};
+			
+			beam.x = beam.x+beam.stepX;
+			beam.y = beam.y+beam.stepY;
+			
+			if (beam.x > window.innerWidth || beam.x < 0)
+			{
+				beam.stepX *= -1;
+			}
+			
+			if (beam.y > window.innerHeight || beam.y < 0)
+			{
+				beam.stepY *= -1;
+			}
+			
+			sky.setLine(lastCoord, beam, [beam.x % 255, beam.y % 255, (beam.x + beam.y) % 255, 255]);
+		};
+		
+        bear.addEventListener("enterframe", moveBear);
+		bear.addEventListener("enterframe", moveBeam);
+		
         bear.addEventListener("touchstart", function(){
             game.rootScene.removeChild(bear);
         });
