@@ -11,11 +11,8 @@ window.onload = function(){console.log(window);
         bear.y = window.innerHeight/2;
         bear.frame = 5;
         game.rootScene.addChild(bear);
-
-		/**
-		 * Test
-		 */
-        bear.addEventListener("enterframe", function(){
+	
+		var enterFrameHandler = function(){
             this.x+=5;
 		
 			if(this.x>window.innerWidth) { this.x = 0; }
@@ -30,7 +27,9 @@ window.onload = function(){console.log(window);
 			}
 			
             this.frame = this.age % 2 + 6;
-        });
+        };
+		
+        bear.addEventListener("enterframe", enterFrameHandler);
 
         bear.addEventListener("touchstart", function(){
             game.rootScene.removeChild(bear);
