@@ -12,6 +12,9 @@ window.onload = function(){console.log(window);
         bear.frame = 5;
         game.rootScene.addChild(bear);
 	
+		/**
+		 * Test
+		 */
 		var enterFrameHandler = function(){
             this.x+=5;
 		
