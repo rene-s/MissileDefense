@@ -5,10 +5,11 @@ beams = [];
 window.onload = function () {
   console.log(window.innerWidth, window.innerHeight);
   var game = new Core(window.innerWidth, window.innerHeight), middle = window.innerHeight / 2;
-  game.fps = 60;
+  game.fps = 30;
   game.preload("img/chara1.png", "snd/boing_spring.wav");
   game.onload = function () {
     var bear = new Sprite(32, 32), lastOffs = 0, offs = 0;
+
     bear.image = game.assets["img/chara1.png"];
     bear.x = 0;
     bear.y = window.innerHeight / 2;
@@ -16,14 +17,18 @@ window.onload = function () {
     game.rootScene.addChild(bear);
 
     var beam = new Beam(window.innerWidth, window.innerHeight);
+
     beam.stepX = 4;
     beam.stepY = 6;
+
     game.rootScene.addChild(beam);
 
     beams.push(beam);
 
     /**
-     * Test
+     * Move the bear
+     *
+     * @return {void}
      */
     var moveBear = function () {
       this.x += 1;
@@ -44,7 +49,12 @@ window.onload = function () {
       this.frame = this.age % 2 + 6;
     };
 
-    var moveBeam = function () {
+    /**
+     * Move beams
+     *
+     * @return {void}
+     */
+    var moveBeam = function () { // @todo Rename to "moveBeams", move content of for loop into new function "moveBeam"
 
       var addBeams = [], canAddBeams = beams.length < 10;
 
@@ -58,17 +68,17 @@ window.onload = function () {
         if (beams[i].x >= window.innerWidth) {
           beams[i].stepX *= -1;
           beams[i].x = window.innerWidth;
-        }
+        } // @todo add "else" here
 
         if (beams[i].x <= 0) {
           beams[i].stepX *= -1;
           beams[i].x = 0;
-        }
+        } // @todo add "else" here
 
         if (beams[i].y >= window.innerHeight) {
           beams[i].stepY *= -1;
           beams[i].y = window.innerHeight;
-        }
+        } // @todo add "else" here
 
         if (beams[i].y <= 0) {
           beams[i].stepY *= -1;
@@ -88,7 +98,14 @@ window.onload = function () {
       }
     };
 
-    var splitBeam = function (beams, beam) {
+    /**
+     * Create copy of a beam instance
+     *
+     * @param beams
+     * @param beam
+     * @returns {Beam}
+     */
+    var splitBeam = function (beams, beam) { // @todo Move this function into Beam.copy()
       var splittedBeam = new Beam(beam.width, beam.height);
 
       splittedBeam.x = beam.x;
