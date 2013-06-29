@@ -1,11 +1,11 @@
 enchant();
 
-beam = {x:0, y:0, stepX:5, stepY:5};
-lastCoord = {x:0, y:0};
+beams = [];
 
-window.onload = function(){console.log(window);	
+window.onload = function(){	
+	console.log(window.innerWidth, window.innerHeight);
     var game = new Core(window.innerWidth, window.innerHeight), middle = window.innerHeight/2;
-    game.fps = 30;
+    game.fps = 60;
     game.preload("img/chara1.png","snd/boing_spring.wav");
     game.onload = function(){
         var bear = new Sprite(32, 32), lastOffs = 0, offs = 0;
@@ -15,8 +15,12 @@ window.onload = function(){console.log(window);
         bear.frame = 5;
         game.rootScene.addChild(bear);
 		
-		var sky = new Surface(window.innerWidth, window.innerHeight);
-		game.rootScene.addChild(sky);
+		var beam = new Beam(window.innerWidth, window.innerHeight);
+		beam.stepX = 4;
+		beam.stepY = 6;
+		game.rootScene.addChild(beam);
+		
+		beams.push(beam);
 	
 		/**
 		 * Test
@@ -39,22 +43,66 @@ window.onload = function(){console.log(window);
         };
 		
 		var moveBeam = function() {
-			lastCoord = {x:beam.x, y:beam.y};
 			
-			beam.x = beam.x+beam.stepX;
-			beam.y = beam.y+beam.stepY;
-			
-			if (beam.x > window.innerWidth || beam.x < 0)
+			var addBeams = [], canAddBeams = beams.length < 10;
+				
+			for (var i = 0; i < beams.length; i++)
 			{
-				beam.stepX *= -1;
+				beams[i].lastX = beams[i].x;
+				beams[i].lastY = beams[i].y;
+				
+				beams[i].x = beams[i].x+beams[i].stepX;
+				beams[i].y = beams[i].y+beams[i].stepY;
+				
+				if (beams[i].x >= window.innerWidth)
+				{
+					beams[i].stepX *= -1;
+					beams[i].x = window.innerWidth;
+				}
+				
+				if (beams[i].x <= 0)
+				{
+					beams[i].stepX *= -1;
+					beams[i].x = 0;
+				}
+				
+				if (beams[i].y >= window.innerHeight)
+				{
+					beams[i].stepY *= -1;
+					beams[i].y = window.innerHeight;
+				}
+				
+				if (beams[i].y <= 0)
+				{
+					beams[i].stepY *= -1;
+					beams[i].y = 0;
+				}
+				
+				beams[i].draw([beams[i].x % 255, beams[i].y % 255, (beams[i].x + beams[i].y) % 255, 255]);
+				
+				if (canAddBeams && (beams[i].x >= window.innerWidth || beams[i].x <= 0 || beams[i].y >= window.innerHeight || beams[i].y <= 0))
+				{
+					addBeams.push(splitBeam(beams, beams[i]));
+				}
 			}
 			
-			if (beam.y > window.innerHeight || beam.y < 0)
-			{
-				beam.stepY *= -1;
+			for(var j = 0; j<addBeams.length; j++) {
+				beams.push(addBeams[j]);
+				game.rootScene.addChild(addBeams[j]);
 			}
+		};
+		
+		var splitBeam = function(beams, beam) {
+			var splittedBeam = new Beam(beam.width, beam.height);
 			
-			sky.setLine(lastCoord, beam, [beam.x % 255, beam.y % 255, (beam.x + beam.y) % 255, 255]);
+			splittedBeam.x = beam.x;
+			splittedBeam.y = beam.y;
+			
+			splittedBeam.stepX = beam.stepX + 1;
+			splittedBeam.stepY = beam.stepY + 2;
+			
+			console.log(splittedBeam);
+			return splittedBeam;
 		};
 		
         bear.addEventListener("enterframe", moveBear);
