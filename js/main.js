@@ -50,46 +50,51 @@ window.onload = function () {
     };
 
     /**
+     * move one beam
+     * @param {Beam} beam Beam instance
+     * @param {Array} addBeams Array with beams to be added
+     * @param {Boolean} canAddBeams Determines if beams can be added or not
+     * @return {void}
+     */
+    var moveBeam = function(beam, addBeams, canAddBeams) {
+      beam.lastX = beam.x;
+      beam.lastY = beam.y;
+
+      beam.x += beam.stepX;
+      beam.y += beam.stepY;
+
+      if (beam.x >= window.innerWidth) {
+        beam.stepX *= -1;
+        beam.x = window.innerWidth;
+      } else if (beam.x <= 0) {
+        beam.stepX *= -1;
+        beam.x = 0;
+      } else if (beam.y >= window.innerHeight) {
+        beam.stepY *= -1;
+        beam.y = window.innerHeight;
+      } else if (beam.y <= 0) {
+        beam.stepY *= -1;
+        beam.y = 0;
+      }
+
+      beam.draw([beam.x % 255, beam.y % 255, (beam.x + beam.y) % 255, 255]);
+
+      if (canAddBeams && (beam.x >= window.innerWidth || beam.x <= 0 || beam.y >= window.innerHeight || beam.y <= 0)) {
+        addBeams.push(splitBeam(beams, beam));
+      }
+    };
+
+    /**
      * Move beams
      *
      * @return {void}
      */
-    var moveBeam = function () { // @todo Rename to "moveBeams", move content of for loop into new function "moveBeam"
+    var moveBeams = function () {
 
       var addBeams = [], canAddBeams = beams.length < 10;
 
       for (var i = 0; i < beams.length; i++) {
-        beams[i].lastX = beams[i].x;
-        beams[i].lastY = beams[i].y;
-
-        beams[i].x = beams[i].x + beams[i].stepX;
-        beams[i].y = beams[i].y + beams[i].stepY;
-
-        if (beams[i].x >= window.innerWidth) {
-          beams[i].stepX *= -1;
-          beams[i].x = window.innerWidth;
-        } // @todo add "else" here
-
-        if (beams[i].x <= 0) {
-          beams[i].stepX *= -1;
-          beams[i].x = 0;
-        } // @todo add "else" here
-
-        if (beams[i].y >= window.innerHeight) {
-          beams[i].stepY *= -1;
-          beams[i].y = window.innerHeight;
-        } // @todo add "else" here
-
-        if (beams[i].y <= 0) {
-          beams[i].stepY *= -1;
-          beams[i].y = 0;
-        }
-
-        beams[i].draw([beams[i].x % 255, beams[i].y % 255, (beams[i].x + beams[i].y) % 255, 255]);
-
-        if (canAddBeams && (beams[i].x >= window.innerWidth || beams[i].x <= 0 || beams[i].y >= window.innerHeight || beams[i].y <= 0)) {
-          addBeams.push(splitBeam(beams, beams[i]));
-        }
+        moveBeam(beams[i], addBeams, canAddBeams);
       }
 
       for (var j = 0; j < addBeams.length; j++) {
@@ -119,7 +124,7 @@ window.onload = function () {
     };
 
     bear.addEventListener("enterframe", moveBear);
-    bear.addEventListener("enterframe", moveBeam);
+    bear.addEventListener("enterframe", moveBeams);
 
     bear.addEventListener("touchstart", function () {
       game.rootScene.removeChild(bear);
