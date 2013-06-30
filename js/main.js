@@ -8,13 +8,23 @@ window.onload = function () {
   game.fps = 30;
   game.preload("img/chara1.png", "snd/boing_spring.wav");
   game.onload = function () {
-    var bear = new enchant.Sprite(32, 32), lastOffs = 0, offs = 0;
+    var firstBear = new enchant.Sprite(32, 32), lastOffs = 0, offs = 0;
 
-    bear.image = game.assets["img/chara1.png"];
-    bear.x = 0;
-    bear.y = window.innerHeight / 2;
-    bear.frame = 5;
-    game.rootScene.addChild(bear);
+    firstBear.image = game.assets["img/chara1.png"];
+    firstBear.x = 0;
+    firstBear.y = middle;
+    firstBear.frame = 5;
+    firstBear.stepX = 2;
+    game.rootScene.addChild(firstBear);
+
+    var secondBear = new enchant.Sprite(32, 32);
+
+    secondBear.image = game.assets["img/chara1.png"];
+    secondBear.x = 100;
+    secondBear.y = middle - 10;
+    secondBear.frame = 5;
+    secondBear.stepX = 1;
+    game.rootScene.addChild(secondBear);
 
     var beam = new enchant.Beam(window.innerWidth, window.innerHeight);
 
@@ -31,7 +41,7 @@ window.onload = function () {
      * @return {void}
      */
     var moveBear = function () {
-      this.x += 1;
+      this.x += this.stepX;
 
       if (this.x > window.innerWidth) {
         this.x = 0;
@@ -103,11 +113,31 @@ window.onload = function () {
       }
     };
 
-    bear.addEventListener("enterframe", moveBear);
-    bear.addEventListener("enterframe", moveBeams);
+    /**
+     * Move beams for every frame
+     */
+    game.addEventListener("enterframe", moveBeams);
 
-    bear.addEventListener("touchstart", function () {
-      game.rootScene.removeChild(bear);
+    /**
+     * Move both bears, use same event handler for both of them.
+     */
+    firstBear.addEventListener("enterframe", moveBear);
+    secondBear.addEventListener("enterframe", moveBear);
+
+    /**
+     * Additionally, second bear must disappear when colliding with first bear
+     */
+    secondBear.addEventListener("enterframe", function () {
+      if (this.intersect(firstBear)) {
+        game.rootScene.removeChild(this);
+      }
+    });
+
+    /**
+     * Does not work, probably because beams canvasses are above bear canvas
+     */
+    firstBear.addEventListener("touchstart", function () {
+      game.rootScene.removeChild(firstBear);
     });
   };
   game.start();
