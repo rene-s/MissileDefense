@@ -77,7 +77,7 @@ window.onload = function () {
         beam.y = 0;
       }
 
-      beam.draw([beam.x % 255, beam.y % 255, (beam.x + beam.y) % 255, 255]);
+      beam.draw([beam.x % 255, beam.y % 255, (beam.x + beam.y) % 255, 255], 1);
 
       if (canAddBeams && (beam.x >= window.innerWidth || beam.x <= 0 || beam.y >= window.innerHeight || beam.y <= 0)) {
         addBeams.push(beam.copy());

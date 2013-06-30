@@ -75,9 +75,10 @@ enchant.Beam = enchant.Class.create(enchant.Surface, {
    * Draw line
    *
    * @param {Array} color RGBA color array
+   * @param {Number} lineWidth Optional line width
    * @return void
    */
-  draw: function (color) {
-    this.setLine({x: this.lastX, y: this.lastY}, {x: this.x, y: this.y}, color);
+  draw: function (color, lineWidth) {
+    this.setLine({x: this.lastX, y: this.lastY}, {x: this.x, y: this.y}, color, lineWidth);
   }
 });

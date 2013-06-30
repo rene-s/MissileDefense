@@ -4,15 +4,16 @@
  * @param {Object} startCoord Object with attributes x,y that are the start coordinate for the line
  * @param {Object} endCoord Object with attributes x,y that are the end coordinate for the line
  * @param {Array} color Array with RGBA values for the line
+ * @param {Number} lineWidth Optional line width
  * @return {void}
  */
-enchant.Surface.prototype.setLine = function (startCoord, endCoord, color) {
+enchant.Surface.prototype.setLine = function (startCoord, endCoord, color, lineWidth) {
   var ctx = this.context;
 
   ctx.beginPath();
   ctx.moveTo(startCoord.x + 0.5, startCoord.y + 0.5);
   ctx.lineTo(endCoord.x + 0.5, endCoord.y + 0.5);
-  ctx.lineWidth = 1;
+  ctx.lineWidth = lineWidth || 1;
   ctx.strokeStyle = "rgba(" + color + ")";
   //ctx.strokeStyle = "rgba("+r+","+g+","+b+","+a+")";
   ctx.stroke();
