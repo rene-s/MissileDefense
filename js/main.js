@@ -8,7 +8,7 @@ window.onload = function () {
   game.fps = 30;
   game.preload("img/chara1.png", "snd/boing_spring.wav");
   game.onload = function () {
-    var bear = new Sprite(32, 32), lastOffs = 0, offs = 0;
+    var bear = new enchant.Sprite(32, 32), lastOffs = 0, offs = 0;
 
     bear.image = game.assets["img/chara1.png"];
     bear.x = 0;
@@ -16,7 +16,7 @@ window.onload = function () {
     bear.frame = 5;
     game.rootScene.addChild(bear);
 
-    var beam = new Beam(window.innerWidth, window.innerHeight);
+    var beam = new enchant.Beam(window.innerWidth, window.innerHeight);
 
     beam.stepX = 4;
     beam.stepY = 6;
@@ -51,12 +51,12 @@ window.onload = function () {
 
     /**
      * move one beam
-     * @param {Beam} beam Beam instance
+     * @param {enchant.Beam} beam Beam instance
      * @param {Array} addBeams Array with beams to be added
      * @param {Boolean} canAddBeams Determines if beams can be added or not
      * @return {void}
      */
-    var moveBeam = function(beam, addBeams, canAddBeams) {
+    var moveBeam = function (beam, addBeams, canAddBeams) {
       beam.lastX = beam.x;
       beam.lastY = beam.y;
 
@@ -80,7 +80,7 @@ window.onload = function () {
       beam.draw([beam.x % 255, beam.y % 255, (beam.x + beam.y) % 255, 255]);
 
       if (canAddBeams && (beam.x >= window.innerWidth || beam.x <= 0 || beam.y >= window.innerHeight || beam.y <= 0)) {
-        addBeams.push(splitBeam(beams, beam));
+        addBeams.push(beam.copy());
       }
     };
 
@@ -101,26 +101,6 @@ window.onload = function () {
         beams.push(addBeams[j]);
         game.rootScene.addChild(addBeams[j]);
       }
-    };
-
-    /**
-     * Create copy of a beam instance
-     *
-     * @param beams
-     * @param beam
-     * @returns {Beam}
-     */
-    var splitBeam = function (beams, beam) { // @todo Move this function into Beam.copy()
-      var splittedBeam = new Beam(beam.width, beam.height);
-
-      splittedBeam.x = beam.x;
-      splittedBeam.y = beam.y;
-
-      splittedBeam.stepX = beam.stepX + 1;
-      splittedBeam.stepY = beam.stepY + 2;
-
-      console.log(splittedBeam);
-      return splittedBeam;
     };
 
     bear.addEventListener("enterframe", moveBear);

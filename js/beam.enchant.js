@@ -2,7 +2,7 @@
  * @fileOverview
  * beam.enchant.js
  * @version 0.0 (2013/06/29)
- * @requires enchant.js v0.8.0 or later
+ * @requires enchant.js v0.7.0 or later
  * @author Stefanie Schmidt/Rene Schmidt
  *
  * @description
@@ -25,7 +25,7 @@ enchant.Beam = enchant.Class.create(enchant.Surface, {
   y: 0,
 
   /**
-   * @type {int} last x position of the beam
+   * @type {int} lastX last x position of the beam
    */
   lastX: 0,
 
@@ -52,6 +52,23 @@ enchant.Beam = enchant.Class.create(enchant.Surface, {
    */
   initialize: function (width, height) {
     enchant.Surface.call(this, width, height);
+  },
+
+  /**
+   * Create copy of a beam instance
+   *
+   * @returns {Beam}
+   */
+  copy: function () {
+    var copy = new enchant.Beam(this.width, this.height);
+
+    copy.x = this.x;
+    copy.y = this.y;
+
+    copy.stepX = this.stepX + 1;
+    copy.stepY = this.stepY + 2;
+
+    return copy;
   },
 
   /**

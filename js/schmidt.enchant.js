@@ -3,7 +3,7 @@
  *
  * @param {Object} startCoord Object with attributes x,y that are the start coordinate for the line
  * @param {Object} endCoord Object with attributes x,y that are the end coordinate for the line
- * @param {Array} colors Array with RGBA values for the line
+ * @param {Array} color Array with RGBA values for the line
  * @return {void}
  */
 enchant.Surface.prototype.setLine = function (startCoord, endCoord, color) {
