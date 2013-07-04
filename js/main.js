@@ -6,7 +6,7 @@ window.onload = function () {
   console.log(window.innerWidth, window.innerHeight);
   var game = new Core(window.innerWidth, window.innerHeight), middle = window.innerHeight / 2;
   game.fps = 30;
-  game.preload("img/chara1.png", "snd/boing_spring.wav");
+  game.preload("img/chara1.png", "snd/boing_spring.wav", "snd/explosion.wav", "img/explosion.gif");
   game.onload = function () {
     var firstBear = new enchant.Sprite(32, 32), lastOffs = 0, offs = 0;
 
@@ -25,6 +25,15 @@ window.onload = function () {
     secondBear.frame = 5;
     secondBear.stepX = 1;
     game.rootScene.addChild(secondBear);
+
+    var explosion = new enchant.Sprite(43, 32), lastOffs = 0, offs = 0;
+
+    explosion.image = game.assets["img/explosion.gif"];
+    explosion.x = 500;
+    explosion.y = middle;
+    explosion.frame = 1;
+    explosion.stepX = 0;
+    game.rootScene.addChild(explosion);
 
     var beam = new enchant.Beam(window.innerWidth, window.innerHeight);
 
@@ -129,6 +138,7 @@ window.onload = function () {
      */
     secondBear.addEventListener("enterframe", function () {
       if (this.intersect(firstBear)) {
+        game.assets['snd/explosion.wav'].play();
         game.rootScene.removeChild(this);
       }
     });
