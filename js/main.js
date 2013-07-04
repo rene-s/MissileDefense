@@ -26,7 +26,7 @@ window.onload = function () {
     secondBear.stepX = 1;
     game.rootScene.addChild(secondBear);
 
-    var explosion = new enchant.Sprite(43, 32), lastOffs = 0, offs = 0;
+    var explosion = new enchant.Sprite(43, 32);
 
     explosion.image = game.assets["img/explosion.gif"];
     explosion.x = 500;
