@@ -158,7 +158,7 @@ window.onload = function () {
         explosion.x = bearTwo.x; // show explosion where the second bear is
         explosion.y = bearTwo.y - (explosion.height / 2); // show explosion where the second bear is with slight offset
 
-        game.assets['snd/explosion.wav'].play();
+        game.assets['snd/explosion.wav'].clone().play();
 
         game.rootScene.removeChild(bearTwo); // remove second bear, because it has "blown up"
         game.rootScene.addChild(explosion); // show explosion
