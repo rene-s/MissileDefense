@@ -6,7 +6,7 @@ window.onload = function () {
   console.log(window.innerWidth, window.innerHeight);
   var game = new Core(window.innerWidth, window.innerHeight), middle = window.innerHeight / 2;
   game.fps = 30;
-  game.preload("img/chara1.png", "snd/boing_spring.wav", "snd/explosion.wav", "img/explosion.gif");
+  game.preload("img/chara1.png", "snd/boing_spring.wav", "snd/explosion.wav", "img/explosion2.png");
   game.onload = function () {
     var firstBear = new enchant.Sprite(32, 32), lastOffs = 0, offs = 0;
 
@@ -26,14 +26,11 @@ window.onload = function () {
     secondBear.stepX = 1;
     game.rootScene.addChild(secondBear);
 
-    var explosion = new enchant.Sprite(43, 32);
+    var explosion = new enchant.Sprite(75, 109);
 
-    explosion.image = game.assets["img/explosion.gif"];
-    explosion.x = 500;
-    explosion.y = middle;
-    explosion.frame = 1;
+    explosion.image = game.assets["img/explosion2.png"];
+    explosion.frame = 0;
     explosion.stepX = 0;
-    game.rootScene.addChild(explosion);
 
     var beam = new enchant.Beam(window.innerWidth, window.innerHeight);
 
@@ -138,8 +135,22 @@ window.onload = function () {
      */
     secondBear.addEventListener("enterframe", function () {
       if (this.intersect(firstBear)) {
+        explosion.x = secondBear.x; // show explosion where the second bear is
+        explosion.y = secondBear.y - (explosion.height / 2); // show explosion where the second bear is with slight offset
+
         game.assets['snd/explosion.wav'].play();
-        game.rootScene.removeChild(this);
+
+        game.rootScene.removeChild(this); // remove second bear, because it has "blown up"
+        game.rootScene.addChild(explosion); // show explosion
+
+        explosion.addEventListener("enterframe", function () {
+          this.y -= 0.5;
+          this.frame = this.age % 75;
+        });
+
+        setTimeout(function () { // remove explosion after 1,5 seconds
+          game.rootScene.removeChild(explosion);
+        }, 1500);
       }
     });
 
