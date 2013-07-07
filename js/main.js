@@ -5,7 +5,7 @@ beams = [];
 window.onload = function () {
   console.log(window.innerWidth, window.innerHeight);
   var game = new Core(window.innerWidth, window.innerHeight);
-  var middle = {x:innerWidth  / 2, y:innerHeight / 2};
+  var middle = {x: innerWidth / 2, y: innerHeight / 2};
   game.fps = 30;
   game.preload("img/chara1.png", "snd/boing_spring.wav", "snd/explosion.wav", "img/explosion2.png");
   game.onload = function () {
@@ -144,13 +144,23 @@ window.onload = function () {
      * Additionally, second bear must disappear when colliding with first bear
      */
     secondBear.addEventListener("enterframe", function () {
-      if (this.intersect(firstBear)) {
-        explosion.x = secondBear.x; // show explosion where the second bear is
-        explosion.y = secondBear.y - (explosion.height / 2); // show explosion where the second bear is with slight offset
+      detectCollision(firstBear, secondBear);
+    });
+
+    /**
+     * detect collision between two bears
+     * @param {enchant.Sprite} bearOne
+     * @param {enchant.Sprite} bearTwo
+     * @return {void}
+     */
+    var detectCollision = function (bearOne, bearTwo) {
+      if (bearTwo.intersect(bearOne)) {
+        explosion.x = bearTwo.x; // show explosion where the second bear is
+        explosion.y = bearTwo.y - (explosion.height / 2); // show explosion where the second bear is with slight offset
 
         game.assets['snd/explosion.wav'].play();
 
-        game.rootScene.removeChild(this); // remove second bear, because it has "blown up"
+        game.rootScene.removeChild(bearTwo); // remove second bear, because it has "blown up"
         game.rootScene.addChild(explosion); // show explosion
 
         explosion.addEventListener("enterframe", function () {
@@ -162,7 +172,7 @@ window.onload = function () {
           game.rootScene.removeChild(explosion);
         }, 1500);
       }
-    });
+    };
 
     thirdBear.addEventListener("enterframe", function () {
 
