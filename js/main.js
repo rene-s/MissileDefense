@@ -164,8 +164,8 @@ window.onload = function () {
         game.rootScene.addChild(explosion); // show explosion
 
         explosion.addEventListener("enterframe", function () {
-          this.y -= 0.5;
-          this.frame = this.age % 75;
+          this.y -= 2;
+          this.frame = this.age % 46;
         });
 
         setTimeout(function () { // remove explosion after 1,5 seconds
@@ -174,10 +174,11 @@ window.onload = function () {
       }
     };
 
+    /**
+     * Additionally, first bear must disappear when colliding with third bear
+     */
     thirdBear.addEventListener("enterframe", function () {
-
-      console.log(this.x, this.y);
-      //this.x -=10;
+      detectCollision(firstBear, thirdBear);
     });
 
     /**
