@@ -163,14 +163,19 @@ window.onload = function () {
         game.rootScene.removeChild(bearTwo); // remove second bear, because it has "blown up"
         game.rootScene.addChild(explosion); // show explosion
 
+        // we re-use the explosion object for two explosions in quick succession.
+        // for that, we always reset attributes frame and age.
+        explosion.frame = explosion.age = 0;
         explosion.addEventListener("enterframe", function () {
           this.y -= 2;
-          this.frame = this.age % 46;
+          // just increment until we run out of frames.
+          if (this.frame < 45) {
+            this.frame++;
+          } else {
+            // if there are no frames left, remove the sprite.
+            game.rootScene.removeChild(explosion);
+          }
         });
-
-        setTimeout(function () { // remove explosion after 1,5 seconds
-          game.rootScene.removeChild(explosion);
-        }, 1500);
       }
     };
 
@@ -178,7 +183,7 @@ window.onload = function () {
      * Additionally, first bear must disappear when colliding with third bear
      */
     thirdBear.addEventListener("enterframe", function () {
-      detectCollision(firstBear, thirdBear);
+      detectCollision(firstBear, thirdBear); // @todo Fix "locking" bug when switching bears and colliding both.
     });
 
     /**
@@ -190,22 +195,18 @@ window.onload = function () {
 
     game.addEventListener(enchant.Event.LEFT_BUTTON_DOWN, function () {
       thirdBear.x -= 10;
-      console.log("test");
     });
 
     game.addEventListener(enchant.Event.RIGHT_BUTTON_DOWN, function () {
       thirdBear.x += 10;
-      console.log("test");
     });
 
     game.addEventListener(enchant.Event.UP_BUTTON_DOWN, function () {
       thirdBear.y -= 10;
-      console.log("test");
     });
 
     game.addEventListener(enchant.Event.DOWN_BUTTON_DOWN, function () {
       thirdBear.y += 10;
-      console.log("test");
     });
   };
   game.start();
