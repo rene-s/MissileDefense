@@ -4,7 +4,8 @@ beams = [];
 
 window.onload = function () {
   console.log(window.innerWidth, window.innerHeight);
-  var game = new Core(window.innerWidth, window.innerHeight), middle = window.innerHeight / 2;
+  var game = new Core(window.innerWidth, window.innerHeight);
+  var middle = {x:innerWidth  / 2, y:innerHeight / 2};
   game.fps = 30;
   game.preload("img/chara1.png", "snd/boing_spring.wav", "snd/explosion.wav", "img/explosion.gif");
   game.onload = function () {
@@ -12,7 +13,7 @@ window.onload = function () {
 
     firstBear.image = game.assets["img/chara1.png"];
     firstBear.x = 0;
-    firstBear.y = middle;
+    firstBear.y = middle.y;
     firstBear.frame = 5;
     firstBear.stepX = 2;
     game.rootScene.addChild(firstBear);
@@ -21,16 +22,25 @@ window.onload = function () {
 
     secondBear.image = game.assets["img/chara1.png"];
     secondBear.x = 100;
-    secondBear.y = middle - 10;
+    secondBear.y = middle.y - 10;
     secondBear.frame = 5;
     secondBear.stepX = 1;
     game.rootScene.addChild(secondBear);
+
+    var thirdBear = new enchant.Sprite(32, 32);
+
+    thirdBear.image = game.assets["img/chara1.png"];
+    thirdBear.x = middle.x;
+    thirdBear.y = middle.y;
+    thirdBear.frame = 5;
+    thirdBear.stepX = 2;
+    game.rootScene.addChild(thirdBear);
 
     var explosion = new enchant.Sprite(43, 32);
 
     explosion.image = game.assets["img/explosion.gif"];
     explosion.x = 500;
-    explosion.y = middle;
+    explosion.y = middle.y;
     explosion.frame = 1;
     explosion.stepX = 0;
     game.rootScene.addChild(explosion);
@@ -59,7 +69,7 @@ window.onload = function () {
       lastOffs = offs;
       offs = Math.sin(0.1 * this.x);
 
-      this.y = middle + offs * 40;
+      this.y = middle.y + offs * 40;
 
       if ((lastOffs < 0 && lastOffs < offs) || (lastOffs > 0 && lastOffs > offs)) {
         game.assets['snd/boing_spring.wav'].play();
@@ -143,11 +153,37 @@ window.onload = function () {
       }
     });
 
+    thirdBear.addEventListener("enterframe", function () {
+
+      console.log(this.x, this.y);
+      //this.x -=10;
+    });
+
     /**
      * Does not work, probably because beams canvasses are above bear canvas
      */
     firstBear.addEventListener("touchstart", function () {
       game.rootScene.removeChild(firstBear);
+    });
+
+    game.addEventListener(enchant.Event.LEFT_BUTTON_DOWN, function () {
+      thirdBear.x -= 10;
+      console.log("test");
+    });
+
+    game.addEventListener(enchant.Event.RIGHT_BUTTON_DOWN, function () {
+      thirdBear.x += 10;
+      console.log("test");
+    });
+
+    game.addEventListener(enchant.Event.UP_BUTTON_DOWN, function () {
+      thirdBear.y -= 10;
+      console.log("test");
+    });
+
+    game.addEventListener(enchant.Event.DOWN_BUTTON_DOWN, function () {
+      thirdBear.y += 10;
+      console.log("test");
     });
   };
   game.start();
