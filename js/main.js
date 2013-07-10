@@ -195,18 +195,22 @@ window.onload = function () {
 
     game.addEventListener(enchant.Event.LEFT_BUTTON_DOWN, function () {
       thirdBear.x -= 10;
+      thirdBear.frame = thirdBear.age % 2 + 6;
     });
 
     game.addEventListener(enchant.Event.RIGHT_BUTTON_DOWN, function () {
       thirdBear.x += 10;
+      thirdBear.frame = thirdBear.age % 2 + 6;
     });
 
     game.addEventListener(enchant.Event.UP_BUTTON_DOWN, function () {
       thirdBear.y -= 10;
+      thirdBear.frame = thirdBear.age % 2 + 6;
     });
 
     game.addEventListener(enchant.Event.DOWN_BUTTON_DOWN, function () {
       thirdBear.y += 10;
+      thirdBear.frame = thirdBear.age % 2 + 6;
     });
   };
   game.start();
