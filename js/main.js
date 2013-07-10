@@ -64,15 +64,19 @@ window.onload = function () {
       }
 
       lastOffs = offs;
-      offs = Math.sin(0.1 * this.x);
 
+      var xDamped = 0.1 * this.x;
+
+      offs = Math.sin(xDamped);
       this.y = middle.y + offs * 40;
 
-      if ((lastOffs < 0 && lastOffs < offs) || (lastOffs > 0 && lastOffs > offs)) {
+      // make some effort to reduce multiple parallel playing of BOING sound. still is highly dependent on dampening factor.
+      if (offs > 0.95 && lastOffs > 0.95 && lastOffs > offs && Math.cos(xDamped) < -0.12) {
         game.assets['snd/boing_spring.wav'].play();
+        console.log("yo");
       }
 
-      this.frame = this.age % 2 + 6;
+      this.frame = this.age % 2 + 6; // advance bear sprite
     };
 
     /**
@@ -103,7 +107,10 @@ window.onload = function () {
         beam.y = 0;
       }
 
-      beam.draw([beam.x % 255, beam.y % 255, (beam.x + beam.y) % 255, 255], 1);
+      beam.draw(
+        [beam.x % 255, beam.y % 255, (beam.x + beam.y) % 255, 255], // array with rgba color values, fake-"randomized"
+        10 // lineWidth
+      );
 
       if (canAddBeams && (beam.x >= window.innerWidth || beam.x <= 0 || beam.y >= window.innerHeight || beam.y <= 0)) {
         addBeams.push(beam.copy());
@@ -158,21 +165,21 @@ window.onload = function () {
         explosion.x = bearTwo.x; // show explosion where the second bear is
         explosion.y = bearTwo.y - (explosion.height / 2); // show explosion where the second bear is with slight offset
 
-        game.assets['snd/explosion.wav'].clone().play();
+        game.assets['snd/explosion.wav'].clone().play(); // clone sound, then play so we can have 1+ explosions at the same time
 
         game.rootScene.removeChild(bearTwo); // remove second bear, because it has "blown up"
-        game.rootScene.addChild(explosion); // show explosion
+        game.rootScene.addChild(explosion); // show explosion instead
 
         // we re-use the explosion object for two explosions in quick succession.
         // for that, we always reset attributes frame and age.
         explosion.frame = explosion.age = 0;
         explosion.addEventListener("enterframe", function () {
-          this.y -= 2;
+          this.y -= 2; // blow "up". looks more "natural".
           // just increment until we run out of frames.
           if (this.frame < 45) {
             this.frame++;
           } else {
-            // if there are no frames left, remove the sprite.
+            // if there are no frames left, we are done. remove the sprite.
             game.rootScene.removeChild(explosion);
           }
         });
