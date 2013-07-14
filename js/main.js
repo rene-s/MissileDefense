@@ -194,8 +194,8 @@ window.onload = function () {
      * Additionally, first bear must disappear when colliding with third bear
      */
     thirdBear.addEventListener("enterframe", function () {
-      detectCollision(thirdBear, secondBear); // @todo Fix "locking" bug when switching bears and colliding both.
-      detectCollision(thirdBear, firstBear); // @todo Fix "locking" bug when switching bears and colliding both.
+      detectCollision(thirdBear, secondBear);
+      detectCollision(thirdBear, firstBear);
     });
 
     /**
