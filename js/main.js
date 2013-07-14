@@ -52,7 +52,7 @@ window.onload = function () {
     beams.push(beam);
 
     /**
-     * Move the bear
+     * Event Handler: Move the bear
      *
      * @return {void}
      */
@@ -80,7 +80,8 @@ window.onload = function () {
     };
 
     /**
-     * move one beam
+     * Event Handler: move one beam
+     *
      * @param {enchant.Beam} beam Beam instance
      * @param {Array} addBeams Array with beams to be added
      * @param {Boolean} canAddBeams Determines if beams can be added or not
@@ -109,7 +110,7 @@ window.onload = function () {
 
       beam.draw(
         [beam.x % 255, beam.y % 255, (beam.x + beam.y) % 255, 255], // array with rgba color values, fake-"randomized"
-        10 // lineWidth
+        1 // lineWidth
       );
 
       if (canAddBeams && (beam.x >= window.innerWidth || beam.x <= 0 || beam.y >= window.innerHeight || beam.y <= 0)) {
@@ -118,7 +119,7 @@ window.onload = function () {
     };
 
     /**
-     * Move beams
+     * Event Handler: Move beams
      *
      * @return {void}
      */
@@ -137,25 +138,8 @@ window.onload = function () {
     };
 
     /**
-     * Move beams for every frame
-     */
-    game.addEventListener("enterframe", moveBeams);
-
-    /**
-     * Move both bears, use same event handler for both of them.
-     */
-    firstBear.addEventListener("enterframe", moveBear);
-    secondBear.addEventListener("enterframe", moveBear);
-
-    /**
-     * Additionally, second bear must disappear when colliding with first bear
-     */
-    secondBear.addEventListener("enterframe", function () {
-      detectCollision(firstBear, secondBear);
-    });
-
-    /**
-     * detect collision between two bears
+     * Event Handler: detect collision between two bears
+     *
      * @param {enchant.Sprite} bearOne
      * @param {enchant.Sprite} bearTwo
      * @return {void}
@@ -185,6 +169,24 @@ window.onload = function () {
         });
       }
     };
+
+    /**
+     * Move beams for every frame
+     */
+    game.addEventListener("enterframe", moveBeams);
+
+    /**
+     * Move both bears, use same event handler for both of them.
+     */
+    firstBear.addEventListener("enterframe", moveBear);
+    secondBear.addEventListener("enterframe", moveBear);
+
+    /**
+     * Additionally, second bear must disappear when colliding with first bear
+     */
+    secondBear.addEventListener("enterframe", function () {
+      detectCollision(firstBear, secondBear);
+    });
 
     /**
      * Additionally, first bear must disappear when colliding with third bear
