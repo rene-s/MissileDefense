@@ -52,6 +52,26 @@ window.onload = function () {
     beams.push(beam);
 
     /**
+     * Remove entity, show explosion, remove explosion.
+     *
+     * @param {enchant.Sprite|enchant.Beam} entity Bear entity
+     * @return void
+     */
+    var explode = function (entity) {
+      explosion.x = entity.x; // show explosion where the second bear is
+      explosion.y = entity.y - (explosion.height / 2); // show explosion where the second bear is with slight offset
+
+      game.assets['snd/explosion.wav'].clone().play(); // clone sound, then play so we can have 1+ explosions at the same time
+
+      game.rootScene.removeChild(entity); // remove second bear, because it has "blown up"
+      game.rootScene.addChild(explosion); // show explosion instead
+
+      // we re-use the explosion object for two explosions in quick succession.
+      // for that, we always reset attributes frame and age.
+      explosion.frame = explosion.age = 0;
+    };
+
+    /**
      * Event Handler: Move the bear
      *
      * @return {void}
@@ -135,7 +155,7 @@ window.onload = function () {
       }
 
       for (var j = 0; j < deleteBeams.length; j++) {
-        game.rootScene.removeChild(deleteBeams[j]["o"]);
+        explode(deleteBeams[j]["o"]);
         beams.remove(deleteBeams[j]["i"]);
       }
 
@@ -156,27 +176,7 @@ window.onload = function () {
       // before checking for a collision, check if bearTwo is actually still in the rootScene. If not, do not do anything.
       // @todo Remove check and remove detectionCollision eventHandler for bearTwo on removeChild(). That's more elegant.
       if (game.rootScene.childNodes.indexOf(bearTwo) !== -1 && bearTwo.intersect(bearOne)) {
-        explosion.x = bearTwo.x; // show explosion where the second bear is
-        explosion.y = bearTwo.y - (explosion.height / 2); // show explosion where the second bear is with slight offset
-
-        game.assets['snd/explosion.wav'].clone().play(); // clone sound, then play so we can have 1+ explosions at the same time
-
-        game.rootScene.removeChild(bearTwo); // remove second bear, because it has "blown up"
-        game.rootScene.addChild(explosion); // show explosion instead
-
-        // we re-use the explosion object for two explosions in quick succession.
-        // for that, we always reset attributes frame and age.
-        explosion.frame = explosion.age = 0;
-        explosion.addEventListener("enterframe", function () {
-          this.y -= 2; // blow "up". looks more "natural".
-          // just increment until we run out of frames.
-          if (this.frame < 45) {
-            this.frame++;
-          } else {
-            // if there are no frames left, we are done. remove the sprite.
-            game.rootScene.removeChild(explosion);
-          }
-        });
+        explode(bearTwo);
       }
     };
 
@@ -231,6 +231,20 @@ window.onload = function () {
     game.addEventListener(enchant.Event.DOWN_BUTTON_DOWN, function () {
       thirdBear.y += 10;
       thirdBear.frame = thirdBear.age % 2 + 6;
+    });
+
+    /**
+     * Add only 1 enterframe event handler for the explosion and not n (n=amount of explosions).
+     */
+    explosion.addEventListener("enterframe", function () {
+      this.y -= 2; // blow "up". looks more "natural".
+      // just increment until we run out of frames.
+      if (this.frame < 45) {
+        this.frame++;
+      } else {
+        // if there are no frames left, we are done. remove the sprite.
+        game.rootScene.removeChild(explosion);
+      }
     });
   };
   game.start();

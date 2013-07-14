@@ -72,8 +72,8 @@ enchant.Beam = enchant.Class.create(enchant.Surface, {
     copy.x = this.x;
     copy.y = this.y;
 
-    copy.stepX = ~~(this.stepX + 1 * Math.randomArbitrary(0.75, 1.25)); // fix hacking and hinting
-    copy.stepY = ~~(this.stepY + 2 * Math.randomArbitrary(0.75, 1.25));
+    copy.stepX = ~~(this.stepX + 1 * Math.randomArbitrary(0.95, 1.33)); // fix hacking and hinting
+    copy.stepY = ~~(this.stepY + 2 * Math.randomArbitrary(0.95, 1.33));
 
     return copy;
   },
@@ -97,10 +97,10 @@ enchant.Beam = enchant.Class.create(enchant.Surface, {
    */
   getBoundingBox: function () {
     return {
-      x1: this.x - 10 * this.lineWidth * 0.33,
-      y1: this.y - 10 * this.lineWidth * 0.33,
-      x2: this.x + 10 * this.lineWidth * 0.33,
-      y2: this.y + 10 * this.lineWidth * 0.33
+      x1: this.x - 5,
+      y1: this.y - 5,
+      x2: this.x + 5,
+      y2: this.y + 5
     };
   },
 
