@@ -145,7 +145,9 @@ window.onload = function () {
      * @return {void}
      */
     var detectCollision = function (bearOne, bearTwo) {
-      if (bearTwo.intersect(bearOne)) {
+      // before checking for a collision, check if bearTwo is actually still in the rootScene. If not, do not do anything.
+      // @todo Remove check and remove detectionCollision eventHandler for bearTwo on removeChild(). That's more elegant.
+      if (game.rootScene.childNodes.indexOf(bearTwo) !== -1 && bearTwo.intersect(bearOne)) {
         explosion.x = bearTwo.x; // show explosion where the second bear is
         explosion.y = bearTwo.y - (explosion.height / 2); // show explosion where the second bear is with slight offset
 
@@ -192,15 +194,16 @@ window.onload = function () {
      * Additionally, first bear must disappear when colliding with third bear
      */
     thirdBear.addEventListener("enterframe", function () {
-      detectCollision(firstBear, thirdBear); // @todo Fix "locking" bug when switching bears and colliding both.
+      detectCollision(thirdBear, secondBear); // @todo Fix "locking" bug when switching bears and colliding both.
+      detectCollision(thirdBear, firstBear); // @todo Fix "locking" bug when switching bears and colliding both.
     });
 
     /**
      * Does not work, probably because beams canvasses are above bear canvas
      */
-    firstBear.addEventListener("touchstart", function () {
-      game.rootScene.removeChild(firstBear);
-    });
+    /*firstBear.addEventListener("touchstart", function () {
+     game.rootScene.removeChild(firstBear);
+     });*/
 
     game.addEventListener(enchant.Event.LEFT_BUTTON_DOWN, function () {
       thirdBear.x -= 10;
