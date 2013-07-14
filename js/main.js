@@ -6,7 +6,7 @@ window.onload = function () {
   console.log(window.innerWidth, window.innerHeight);
   var game = new Core(window.innerWidth, window.innerHeight);
   var middle = {x: innerWidth / 2, y: innerHeight / 2};
-  game.fps = 10;
+  game.fps = 30;
   game.preload("img/chara1.png", "snd/boing_spring.wav", "snd/explosion.wav", "img/explosion2.png");
   game.onload = function () {
     var firstBear = new enchant.Sprite(32, 32), lastOffs = 0, offs = 0;
@@ -110,7 +110,7 @@ window.onload = function () {
 
       beam.draw(
         [beam.x % 255, beam.y % 255, (beam.x + beam.y) % 255, 255], // array with rgba color values, fake-"randomized"
-        1 // lineWidth
+        10 // lineWidth
       );
 
       if (canAddBeams && (beam.x >= window.innerWidth || beam.x <= 0 || beam.y >= window.innerHeight || beam.y <= 0)) {
@@ -125,16 +125,21 @@ window.onload = function () {
      */
     var moveBeams = function () {
 
-      var addBeams = [], canAddBeams = beams.length < 10;
+      var addBeams = [], canAddBeams = beams.length < 30, deleteBeams = [];
 
       for (var i = 0; i < beams.length; i++) {
         moveBeam(beams[i], addBeams, canAddBeams);
         if (beams[i].intersect(thirdBear)) {
-          game.rootScene.removeChild(beams[i]);
+          deleteBeams.push({i: i, o: beams[i]});
         }
       }
 
-      for (var j = 0; j < addBeams.length; j++) {
+      for (var j = 0; j < deleteBeams.length; j++) {
+        game.rootScene.removeChild(deleteBeams[j]["o"]);
+        beams.remove(deleteBeams[j]["i"]);
+      }
+
+      for (j = 0; j < addBeams.length; j++) {
         beams.push(addBeams[j]);
         game.rootScene.addChild(addBeams[j]);
       }

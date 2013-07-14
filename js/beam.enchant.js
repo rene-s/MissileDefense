@@ -35,6 +35,13 @@ enchant.Beam = enchant.Class.create(enchant.Surface, {
   lastY: 0,
 
   /**
+   * Line width. Gets set by draw(). Basically this is the last lineWidth used.
+   *
+   * @type {int}
+   */
+  lineWidth: 1,
+
+  /**
    * @type {int} x step of the beam
    */
   stepX: 1,
@@ -57,7 +64,7 @@ enchant.Beam = enchant.Class.create(enchant.Surface, {
   /**
    * Create copy of a beam instance
    *
-   * @returns {Beam}
+   * @returns {enchant.Beam}
    */
   copy: function () {
     var copy = new enchant.Beam(this.width, this.height);
@@ -65,8 +72,8 @@ enchant.Beam = enchant.Class.create(enchant.Surface, {
     copy.x = this.x;
     copy.y = this.y;
 
-    copy.stepX = this.stepX + 1;
-    copy.stepY = this.stepY + 2;
+    copy.stepX = ~~(this.stepX + 1 * Math.randomArbitrary(0.75, 1.25)); // fix hacking and hinting
+    copy.stepY = ~~(this.stepY + 2 * Math.randomArbitrary(0.75, 1.25));
 
     return copy;
   },
@@ -79,6 +86,7 @@ enchant.Beam = enchant.Class.create(enchant.Surface, {
    * @return void
    */
   draw: function (color, lineWidth) {
+    this.lineWidth = lineWidth;
     this.setLine({x: this.lastX, y: this.lastY}, {x: this.x, y: this.y}, color, lineWidth);
   },
 
@@ -88,7 +96,12 @@ enchant.Beam = enchant.Class.create(enchant.Surface, {
    * @returns {{x1: number, y1: number, x2: number, y2: number}}
    */
   getBoundingBox: function () {
-    return {x1: this.x - 5, y1: this.y - 5, x2: this.x + 5, y2: this.y + 5};
+    return {
+      x1: this.x - 10 * this.lineWidth * 0.33,
+      y1: this.y - 10 * this.lineWidth * 0.33,
+      x2: this.x + 10 * this.lineWidth * 0.33,
+      y2: this.y + 10 * this.lineWidth * 0.33
+    };
   },
 
   /**
