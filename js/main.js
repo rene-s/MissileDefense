@@ -6,7 +6,7 @@ window.onload = function () {
   console.log(window.innerWidth, window.innerHeight);
   var game = new Core(window.innerWidth, window.innerHeight);
   var middle = {x: innerWidth / 2, y: innerHeight / 2};
-  game.fps = 30;
+  game.fps = 10;
   game.preload("img/chara1.png", "snd/boing_spring.wav", "snd/explosion.wav", "img/explosion2.png");
   game.onload = function () {
     var firstBear = new enchant.Sprite(32, 32), lastOffs = 0, offs = 0;
@@ -129,6 +129,9 @@ window.onload = function () {
 
       for (var i = 0; i < beams.length; i++) {
         moveBeam(beams[i], addBeams, canAddBeams);
+        if (beams[i].intersect(thirdBear)) {
+          game.rootScene.removeChild(beams[i]);
+        }
       }
 
       for (var j = 0; j < addBeams.length; j++) {

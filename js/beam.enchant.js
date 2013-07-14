@@ -80,5 +80,28 @@ enchant.Beam = enchant.Class.create(enchant.Surface, {
    */
   draw: function (color, lineWidth) {
     this.setLine({x: this.lastX, y: this.lastY}, {x: this.x, y: this.y}, color, lineWidth);
+  },
+
+  /**
+   * get bounding box
+   *
+   * @returns {{x1: number, y1: number, x2: number, y2: number}}
+   */
+  getBoundingBox: function () {
+    return {x1: this.x - 5, y1: this.y - 5, x2: this.x + 5, y2: this.y + 5};
+  },
+
+  /**
+   * check intersection with entity
+   *
+   * @param {enchant.Entity} entity Entity to detect intersection with
+   * @returns {boolean}
+   */
+  intersect: function (entity) {
+    var boundingBox = this.getBoundingBox(); // bounding box of beam
+    var entityBoundingBox = {x1: entity.x, y1: entity.y, x2: entity.x + entity.width, y2: entity.y + entity.height};
+
+    return (boundingBox.x1 < entityBoundingBox.x2 && boundingBox.y1 < entityBoundingBox.y2)
+      && (boundingBox.y2 > entityBoundingBox.y1 && boundingBox.x2 > entityBoundingBox.x1);
   }
 });
