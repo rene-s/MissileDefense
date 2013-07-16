@@ -129,7 +129,12 @@ window.onload = function () {
       }
 
       beam.draw(
-        [beam.x % 255, beam.y % 255, (beam.x + beam.y) % 255, 255], // array with rgba color values, fake-"randomized"
+        [ // array with rgba color values, fake-"randomized"
+          Math.randomInt(0, 255),
+          Math.randomInt(0, 255),
+          Math.randomInt(0, 255),
+          Math.randomInt(0, 255)
+        ],
         10 // lineWidth
       );
 
