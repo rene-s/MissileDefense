@@ -152,6 +152,9 @@ window.onload = function () {
         if (beams[i].intersect(thirdBear)) {
           deleteBeams.push({i: i, o: beams[i]});
         }
+        if (beams[i].intersect(firstBear)) {
+          deleteBeams.push({i: i, o: beams[i]});
+        }
       }
 
       for (var j = 0; j < deleteBeams.length; j++) {
@@ -207,11 +210,11 @@ window.onload = function () {
     });
 
     /**
-     * Does not work, probably because beams canvasses are above bear canvas
+     * Remove first bear on click
      */
-    /*firstBear.addEventListener("touchstart", function () {
-     game.rootScene.removeChild(firstBear);
-     });*/
+    firstBear.addEventListener("touchstart", function () {
+      game.rootScene.removeChild(firstBear);
+    });
 
     game.addEventListener(enchant.Event.LEFT_BUTTON_DOWN, function () {
       thirdBear.x -= 10;
