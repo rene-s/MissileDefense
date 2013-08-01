@@ -6,6 +6,9 @@ window.onload = function () {
   console.log(window.innerWidth, window.innerHeight);
   var game = new Core(window.innerWidth, window.innerHeight);
   var middle = {x: innerWidth / 2, y: innerHeight / 2};
+  //var radius = 70;
+  //var canvas = document.getElementById('circle');
+  //var context = canvas.getContext('2d');
   game.fps = 30;
   game.preload("img/chara1.png", "snd/boing_spring.wav", "snd/explosion.wav", "img/explosion2.png");
   game.onload = function () {
@@ -36,6 +39,12 @@ window.onload = function () {
     thirdBear.stepX = 2;
     game.rootScene.addChild(thirdBear);
 
+    /*context.beginPath();
+    context.arc(middle.x, middle.y, radius, 0, 2 * Math.PI, false);
+    context.lineWidth = 2;
+    context.strokeStyle = '#000000';
+    context.stroke();
+    */
     var explosion = new enchant.Sprite(75, 109);
 
     explosion.image = game.assets["img/explosion2.png"];
@@ -223,21 +232,25 @@ window.onload = function () {
 
     game.addEventListener(enchant.Event.LEFT_BUTTON_DOWN, function () {
       thirdBear.x -= 10;
+      thirdBear.rotate(-5);
       thirdBear.frame = thirdBear.age % 2 + 6;
     });
 
     game.addEventListener(enchant.Event.RIGHT_BUTTON_DOWN, function () {
       thirdBear.x += 10;
+      thirdBear.rotate(5);
       thirdBear.frame = thirdBear.age % 2 + 6;
     });
 
     game.addEventListener(enchant.Event.UP_BUTTON_DOWN, function () {
       thirdBear.y -= 10;
+      thirdBear.rotate(-5);
       thirdBear.frame = thirdBear.age % 2 + 6;
     });
 
     game.addEventListener(enchant.Event.DOWN_BUTTON_DOWN, function () {
       thirdBear.y += 10;
+      thirdBear.rotate(5);
       thirdBear.frame = thirdBear.age % 2 + 6;
     });
 
