@@ -6,13 +6,15 @@ window.onload = function () {
   console.log(window.innerWidth, window.innerHeight);
   var game = new Core(window.innerWidth, window.innerHeight);
   var middle = {x: innerWidth / 2, y: innerHeight / 2};
-  //var radius = 70;
-  //var canvas = document.getElementById('circle');
-  //var context = canvas.getContext('2d');
+
   game.fps = 30;
-  game.preload("img/chara1.png", "snd/boing_spring.wav", "snd/explosion.wav", "img/explosion2.png");
+  game.preload("img/ball.png", "img/chara1.png", "snd/boing_spring.wav", "snd/explosion.wav", "img/explosion2.png");
   game.onload = function () {
-    var firstBear = new enchant.Sprite(32, 32), lastOffs = 0, offs = 0;
+    var firstBear = new enchant.Sprite(32, 32),
+      lastOffs = 0,
+      offs = 0,
+      ball,
+      balls = [];
 
     firstBear.image = game.assets["img/chara1.png"];
     firstBear.x = 0;
@@ -40,11 +42,11 @@ window.onload = function () {
     game.rootScene.addChild(thirdBear);
 
     /*context.beginPath();
-    context.arc(middle.x, middle.y, radius, 0, 2 * Math.PI, false);
-    context.lineWidth = 2;
-    context.strokeStyle = '#000000';
-    context.stroke();
-    */
+     context.arc(middle.x, middle.y, radius, 0, 2 * Math.PI, false);
+     context.lineWidth = 2;
+     context.strokeStyle = '#000000';
+     context.stroke();
+     */
     var explosion = new enchant.Sprite(75, 109);
 
     explosion.image = game.assets["img/explosion2.png"];
@@ -102,7 +104,6 @@ window.onload = function () {
       // make some effort to reduce multiple parallel playing of BOING sound. still is highly dependent on dampening factor.
       if (offs > 0.95 && lastOffs > 0.95 && lastOffs > offs && Math.cos(xDamped) < -0.12) {
         game.assets['snd/boing_spring.wav'].play();
-        console.log("yo");
       }
 
       this.frame = this.age % 2 + 6; // advance bear sprite
@@ -158,20 +159,22 @@ window.onload = function () {
      * @return {void}
      */
     var moveBeams = function () {
-
-      var addBeams = [], canAddBeams = beams.length < 30, deleteBeams = [];
+      var addBeams = [],
+        canAddBeams = beams.length < 30,
+        deleteBeams = [],
+        collPartners = balls.concat([firstBear, /*secondBear,*/ thirdBear]); // merge all possible collision "partners" into one array so we can iterate over them more easily
 
       for (var i = 0; i < beams.length; i++) {
         moveBeam(beams[i], addBeams, canAddBeams);
-        if (beams[i].intersect(thirdBear)) {
-          deleteBeams.push({i: i, o: beams[i]});
-        }
-        if (beams[i].intersect(firstBear)) {
-          deleteBeams.push({i: i, o: beams[i]});
+
+        for (var j = 0; j < collPartners.length; j++) {
+          if (beams[i].intersect(collPartners[j])) {
+            deleteBeams.push({i: i, o: beams[i]});
+          }
         }
       }
 
-      for (var j = 0; j < deleteBeams.length; j++) {
+      for (j = 0; j < deleteBeams.length; j++) {
         explode(deleteBeams[j]["o"]);
         beams.remove(deleteBeams[j]["i"]);
       }
@@ -183,24 +186,58 @@ window.onload = function () {
     };
 
     /**
-     * Event Handler: detect collision between two bears
+     * Move single ball
      *
-     * @param {enchant.Sprite} bearOne
-     * @param {enchant.Sprite} bearTwo
-     * @return {void}
+     * @param {number} i Index of ball in balls. Needed for removal of ball.
+     * @param {enchant.Sprite} ball Ball to move
      */
-    var detectCollision = function (bearOne, bearTwo) {
-      // before checking for a collision, check if bearTwo is actually still in the rootScene. If not, do not do anything.
-      // @todo Remove check and remove detectionCollision eventHandler for bearTwo on removeChild(). That's more elegant.
-      if (game.rootScene.childNodes.indexOf(bearTwo) !== -1 && bearTwo.intersect(bearOne)) {
-        explode(bearTwo);
+    var moveBall = function (i, ball) {
+      ball.rotate(5);
+      ball.x += ball.stepX;
+      ball.y += ball.stepY;
+
+      detectCollision(firstBear, ball);
+      detectCollision(secondBear, ball);
+      detectCollision(thirdBear, ball);
+
+      // remove ball from balls and from scene when it moves to of view
+      if (ball.x >= window.innerWidth || ball.x <= -32 || ball.y >= window.innerHeight || ball.y <= -32) {
+        game.rootScene.removeChild(ball);
+        balls.remove(i);
       }
     };
 
     /**
-     * Move beams for every frame
+     * Event Handler: Move balls
+     *
+     * @return {void}
+     */
+    var moveBalls = function () {
+      for (var i = 0; i < balls.length; i++) {
+        moveBall(i, balls[i]);
+      }
+    };
+
+    /**
+     * Event Handler: detect collision between two sprites
+     *
+     * @param {enchant.Sprite} projectile
+     * @param {enchant.Sprite} victim
+     * @return {void}
+     */
+    var detectCollision = function (projectile, victim) {
+      // before checking for a collision, check if victim is actually still in the rootScene. If not, do not do anything.
+      // @todo Remove check and remove detectionCollision eventHandler for victim on removeChild(). That's more elegant.
+      if (game.rootScene.childNodes.indexOf(victim) !== -1 && victim.intersect(projectile)) {
+        explode(victim);
+      }
+    };
+
+    /**
+     * Move beams and beams for every frame
      */
     game.addEventListener("enterframe", moveBeams);
+    game.addEventListener("enterframe", moveBalls);
 
     /**
      * Move both bears, use same event handler for both of them.
@@ -252,6 +289,31 @@ window.onload = function () {
       thirdBear.y += 10;
       thirdBear.rotate(5);
       thirdBear.frame = thirdBear.age % 2 + 6;
+    });
+
+    thirdBear.addEventListener("touchstart", function () {
+      var ball = new enchant.Sprite(32, 32), randomInt = 0;
+
+      ball.image = game.assets["img/ball.png"];
+      ball.frame = 1;
+
+      do {
+        randomInt = Math.randomInt(-5, 5);
+      } while (randomInt == 0);
+
+      ball.stepX = 2 * randomInt;
+
+      do {
+        randomInt = Math.randomInt(-5, 5);
+      } while (randomInt == 0);
+
+      ball.stepY = 2 * randomInt;
+
+      ball.x = thirdBear.x + (32 * (ball.stepX > 0 ? 1 : -1)); // place ball with offset
+      ball.y = thirdBear.y + (32 * (ball.stepY > 0 ? 1 : -1));
+
+      game.rootScene.addChild(ball);
+      balls.push(ball);
     });
 
     /**
